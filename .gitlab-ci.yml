@@ -1,0 +1,19 @@
+get-branches:
+  image: alpine:latest
+  
+  before_script:
+    - apk add --no-cache github-cli jq bash coreutils
+    
+  script:
+    - echo "Fetching the top 4 latest release branches..."
+    - |
+      LATEST_RELEASES=$(gh api "repos/kubernetes-sigs/kubespray/branches?per_page=100" --paginate \
+        | jq -r '.[].name | select(test("^release-[0-9]+\\.[0-9]+$"))' \
+        | sort -V -r \
+        | head -n 4)
+    
+    - echo "The identified branches are:"
+    - echo "$LATEST_RELEASES"
+
+  variables:
+    GH_TOKEN: $GH_TOKEN
