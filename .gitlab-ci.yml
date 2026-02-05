@@ -16,4 +16,4 @@ get-branches:
     - echo "$LATEST_RELEASES"
 
   variables:
-    GH_TOKEN: $GH_TOKEN
+    GH_TOKEN: $gh_token
