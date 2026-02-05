@@ -1,5 +1,6 @@
 stages:
-  - retrieve
+  - retrieve-branches
+  - retrieve-repos
   - cleanup
 get-branches:
   stage: retrieve
@@ -23,6 +24,16 @@ get-branches:
     GH_TOKEN: $gh_token
 
 do-cleanup:
+  stage: retrieve-repos
+  image: alpine:latest
+  script:
+    - echo "The repos to be removed"
+    - |
+      for REPO in $REPO_TO_DELETE; do
+        echo "Deleting image: quay.io/kubespray/vm-$REPO"
+      done
+
+get-removed-repos:
   stage: cleanup
   image: python:3.9-slim
   script:

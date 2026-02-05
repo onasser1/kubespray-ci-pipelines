@@ -26,7 +26,6 @@ def get_all_quay_repos(namespace):
         
         if not next_page:
             break
-            
     return all_repos
 
 repos_list = get_all_quay_repos("kubespray")
@@ -44,5 +43,5 @@ for repo in repos_list:
                 removed_repos.append(repo)
             continue
 
-for repo in removed_repos:
-    print(f"Deleting vm-{repo} from quay.io: requests.delete(\"https://quay.io/api/v1/repository/kubespray/vm-{repo}\")")
+with open("build.env", "w") as f:
+    f.write(f"REPOS_TO_DELETE={' '.join(removed_repos)}\n")
