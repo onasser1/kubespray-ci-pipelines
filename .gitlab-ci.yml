@@ -3,7 +3,7 @@ stages:
   - retrieve-repos
   - cleanup
 get-branches:
-  stage: retrieve
+  stage: retrieve-branches
   image: alpine:latest
   before_script:
     - apk add --no-cache github-cli jq bash coreutils
