@@ -37,10 +37,8 @@ for repo in repos_list:
     for ab in active_branches:
         response = requests.get(f"https://raw.githubusercontent.com/kubernetes-sigs/kubespray/{ab}/test-infra/image-builder/roles/kubevirt-images/defaults/main.yml")
         if repo not in response.text:
-            #print(f"{repo} from quay.io is not in release branch: {ab}")
             count = count + 1
             if count == len(active_branches):
-                #print(f"================================\nThis image should be deleted from quay.io registry: {repo}, because it's not used in any active release branch.")
                 removed_repos.append(repo)
             continue
 
