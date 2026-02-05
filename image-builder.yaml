@@ -1,0 +1,16 @@
+---
+build-kubevirt-images:
+  stage: build
+  image: $PIPELINE_IMAGE
+  needs:
+    - pipeline-image
+  rules:
+    - if: $CI_COMMIT_BRANCH == "master"
+      changes:
+        - test-infra/image-builder/roles/kubevirt-images/defaults/main.ymlwwww
+    - if: $CI_PIPELINE_SOURCE == "schedule"
+    - when: manual
+      allow_failure: true
+  script:
+    - cd test-infra/image-builder
+    - make deploy docker_password="$QUAY_REGISTRY_PASSWORD"
