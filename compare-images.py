@@ -30,7 +30,8 @@ def get_all_quay_repos(namespace):
 
 repos_list = get_all_quay_repos("kubespray")
 removed_repos = []
-active_branches = ['master', 'release-2.30', 'release-2.29', 'release-2.28', 'release-2.27', 'release-2.26']
+raw_env = os.getenv("LATEST_RELEASES", "")
+active_branches = raw_env.split()
 
 for repo in repos_list:
     count = 0

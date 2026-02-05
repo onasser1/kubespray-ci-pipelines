@@ -1,19 +1,30 @@
+stages:
+  - retrieve
+  - cleanup
 get-branches:
+  stage: retrieve
   image: alpine:latest
-  
   before_script:
     - apk add --no-cache github-cli jq bash coreutils
     
   script:
     - echo "Fetching the top 4 latest release branches..."
     - |
-      LATEST_RELEASES=$(gh api "repos/kubernetes-sigs/kubespray/branches?per_page=100" --paginate \
+      RELEASE_BRANCHES=$(gh api "repos/kubernetes-sigs/kubespray/branches?per_page=100" --paginate \
         | jq -r '.[].name | select(test("^release-[0-9]+\\.[0-9]+$"))' \
         | sort -V -r \
         | head -n 4)
-    
-    - echo "The identified branches are:"
-    - echo "$LATEST_RELEASES"
 
+      echo "LATEST_RELEASES=master $RELEASES_BRANCHES" > build.env
+  artifacts:
+    reports:
+      dotenv: build.env
   variables:
     GH_TOKEN: $gh_token
+
+do-cleanup:
+  stage: cleanup
+  image: python:3.9-slim
+  script:
+    - pip install requests
+    - python compare-images.py
