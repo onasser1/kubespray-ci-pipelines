@@ -1,10 +1,11 @@
 import os
 import requests
 
+url = "https://quay.io/api/v1/repository"
+
 def get_all_quay_repos(namespace):
     all_repos = []
     next_page = None
-    url = "https://quay.io/api/v1/repository"
     
     while True:
         params = {
@@ -43,4 +44,5 @@ for repo in repos_list:
                 removed_repos.append(repo)
             continue
 
-print(removed_repos)
+for repo in removed_repos:
+    print(f"Deleting vm-{repo} from quay.io: requests.delete(\"https://quay.io/api/v1/repository/kubespray/vm-{repo}\")")
