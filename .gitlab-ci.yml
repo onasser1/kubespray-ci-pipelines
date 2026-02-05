@@ -1,8 +1,7 @@
 stages:
   - retrieve-branches
-  - identify-stale
+  - identify-repos
   - cleanup
-
 get-branches:
   stage: retrieve-branches
   image: alpine:latest
@@ -10,11 +9,12 @@ get-branches:
     - apk add --no-cache github-cli jq bash coreutils
   script:
     - |
-      RELEASE_BRANCHES=$(gh api "repos/kubernetes-sigs/kubespray/branches?per_page=100" --paginate \
+      # tr '\n' ' ' converts the list into a single space-separated string
+      RELEASES=$(gh api "repos/kubernetes-sigs/kubespray/branches?per_page=100" --paginate \
         | jq -r '.[].name | select(test("^release-[0-9]+\\.[0-9]+$"))' \
-        | sort -V -r \
-        | head -n 4)
-      echo "LATEST_RELEASES=master $RELEASE_BRANCHES" > build.env
+        | sort -V -r | head -n 4 | tr '\n' ' ')
+      
+      echo "LATEST_RELEASES=\"master $RELEASES\"" > build.env
   artifacts:
     reports:
       dotenv: build.env
@@ -22,7 +22,7 @@ get-branches:
     GH_TOKEN: $gh_token
 
 get-removed-repos:
-  stage: identify-stale
+  stage: identify-repos
   image: python:3.9-slim
   script:
     - pip install requests
@@ -35,10 +35,9 @@ do-cleanup:
   stage: cleanup
   image: alpine:latest
   script:
-    - echo "The repos to be removed:"
     - |
       if [ -z "$REPOS_TO_DELETE" ]; then
-        echo "No repos identified for deletion."
+        echo "Nothing to delete."
       else
         for REPO in $REPOS_TO_DELETE; do
           echo "Deleting image: quay.io/kubespray/vm-$REPO"

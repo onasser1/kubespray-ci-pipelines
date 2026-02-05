@@ -44,4 +44,5 @@ for repo in repos_list:
             continue
 
 with open("build.env", "w") as f:
-    f.write(f"REPOS_TO_DELETE={' '.join(removed_repos)}\n")
+    repos_string = " ".join(removed_repos)
+    f.write(f'REPOS_TO_DELETE="{repos_string}"\n')
