@@ -29,7 +29,7 @@ do-cleanup:
   script:
     - echo "The repos to be removed"
     - |
-      for REPO in $REPO_TO_DELETE; do
+      for REPO in $REPOS_TO_DELETE; do
         echo "Deleting image: quay.io/kubespray/vm-$REPO"
       done
 
