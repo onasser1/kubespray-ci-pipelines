@@ -1,1 +1,2 @@
-1. List and Display all repos in quay.io/kubespray/repositories.
+-[x] List and Display all repos in quay.io/kubespray/repositories.
+-[ ] retrieve content of main.yml in each release through URL.
