@@ -43,7 +43,9 @@ do-cleanup:
 
 run-automated-upgrade-galaxy:
   stage: upgrade-galaxy
-  image: alpine:latest
+  image: ubuntu:latest
   script:
-    - chmod +x upgrade-galaxy.sh
-    - ./upgrade-galaxy.sh
+    - |
+      ls -la
+      chmod +x upgrade-galaxy.sh
+      ./upgrade-galaxy.sh
