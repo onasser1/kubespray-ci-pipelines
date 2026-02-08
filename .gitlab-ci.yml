@@ -2,6 +2,7 @@ stages:
   - retrieve-branches
   - identify-repos
   - cleanup
+  - generate-release-notes
 get-branches:
   stage: retrieve-branches
   image: alpine:latest
@@ -9,7 +10,6 @@ get-branches:
     - apk add --no-cache github-cli jq bash coreutils
   script:
     - |
-      # tr '\n' ' ' converts the list into a single space-separated string
       RELEASES=$(gh api "repos/kubernetes-sigs/kubespray/branches?per_page=100" --paginate \
         | jq -r '.[].name | select(test("^release-[0-9]+\\.[0-9]+$"))' \
         | sort -V -r | head -n 4 | tr '\n' ' ')
@@ -36,10 +36,6 @@ do-cleanup:
   image: alpine:latest
   script:
     - |
-      if [ -z "$REPOS_TO_DELETE" ]; then
-        echo "Nothing to delete."
-      else
-        for REPO in $REPOS_TO_DELETE; do
+      for REPO in $REPOS_TO_DELETE; do
           echo "Deleting image: quay.io/kubespray/vm-$REPO"
-        done
-      fi
+      done

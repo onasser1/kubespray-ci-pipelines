@@ -1,0 +1,43 @@
+determine-bump-type:
+    runs-on: ubuntu-latest
+    outputs:
+      bump_type: ${{ steps.determine.outputs.bump_type }}
+    steps:
+      - name: Determine bump type
+        id: determine
+        run: |
+          current_tag=$(cat VERSION)
+          prev_tag=$(git tag --sort=-version:refname | head -1)
+
+          # Remove 'v' prefix if present
+          current_tag="${current_tag#v}"
+          prev_tag="${prev_tag#v}"
+
+          # Parse versions (assuming MAJOR.MINOR.PATCH format)
+          IFS='.' read -r c_major c_minor c_patch <<< "$current_tag"
+          IFS='.' read -r p_major p_minor p_patch <<< "$prev_tag"
+
+          if [ "$c_major" -gt "$p_major" ]; then
+            bump_type="major"
+          elif [ "$c_minor" -gt "$p_minor" ]; then
+            bump_type="minor"
+          else
+            bump_type="patch"
+          fi
+
+          echo "bump_type=$bump_type" >> "$GITHUB_OUTPUT"
+
+action-y-minor:
+    needs: determine-bump-type
+    if: needs.determine-bump-type.outputs.bump_type == 'minor'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Bump version in galaxy.yml to the next version in master branch
+        run: # Update galaxy.yaml
+action-z-patch:
+    needs: determine-bump-type
+    if: needs.determine-bump-type.outputs.bump_type == 'patch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Bump version in galaxy.yml to the next version in release branch
+        run: # Update galaxy.yaml 
