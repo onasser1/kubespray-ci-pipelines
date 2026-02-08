@@ -12,17 +12,13 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       bump_type: ${{ steps.compute.outputs.bump_type }}
-      next_version_plain: ${{ steps.compute.outputs.next_version_plain }}
+      next_version_plain: ${{ steps.compute.outputs.next_expected_release }}
       target_branch: ${{ steps.compute.outputs.target_branch }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-
-      - name: Install dependencies (if needed by script)
-        run: |
-          # e.g., if script uses sed/git; Ubuntu has them, but add if custom
 
       - name: Compute bump type
         id: compute
@@ -44,14 +40,14 @@ jobs:
 
       - name: Bump galaxy.yaml with new version
         run: |
-          new_version="${{ needs.compute-bump.outputs.next_version_plain }}"
+          new_version="${{ needs.compute-bump.outputs.next_expected_release }}"
           sed -i "s/version: [0-9]\+\.[0-9]\+\.[0-9]\+/version: $new_version/" galaxy.yaml
 
       - name: Commit and push to main
         run: |
           # Authentication 
           git add galaxy.yaml
-          git commit -m "Bump galaxy.yaml version to ${{ needs.compute-bump.outputs.next_version_plain }} (minor) [skip ci]"
+          git commit -m "Bump galaxy.yaml version to ${{ needs.compute-bump.outputs.next_expected_release }} (minor) [skip ci]"
           git push origin master
 
   update-patch:
@@ -74,7 +70,7 @@ jobs:
 
       - name: Bump galaxy.yaml with new version
         run: |
-          new_version="${{ needs.compute-bump.outputs.next_version_plain }}"
+          new_version="${{ needs.compute-bump.outputs.next_expected_release }}"
           sed -i "s/version: [0-9]\+\.[0-9]\+\.[0-9]\+/version: $new_version/" galaxy.yaml
 
       - name: Commit and push to release branch
@@ -82,5 +78,5 @@ jobs:
           target="${{ needs.compute-bump.outputs.target_branch }}"
           # Authentication
           git add galaxy.yaml
-          git commit -m "Bump galaxy.yaml version to ${{ needs.compute-bump.outputs.next_version_plain }} (patch) [skip ci]"
+          git commit -m "Bump galaxy.yaml version to ${{ needs.compute-bump.outputs.next_expected_release }} (patch) [skip ci]"
           git push origin "$target"
