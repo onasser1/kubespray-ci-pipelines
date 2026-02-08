@@ -2,9 +2,14 @@
 
 CURRENT_RELEASE=$(cat VERSION)
 PREVIOUS_RELEASE=$(git tag --sort=-version:refname | head -1)
+echo "CURRENT RELEASE: $CURRENT_RELEASE"
+echo "PREVIOUS RELEASE: $PREVIOUS_RELEASE"
 
 current_version_number="${CURRENT_RELEASE#v}"
 previous_version_number="${PREVIOUS_RELEASE#v}"
+
+echo "CURRENT VERSION: $current_version_number"
+echo "PREVIOUS VERSION: $previous_version_number"
 
 IFS='.' read -r c_major c_minor c_patch <<< "$current_version_number"
 IFS='.' read -r p_major p_minor p_patch <<< "$previous_version_number"
@@ -16,6 +21,9 @@ p_major=${p_major:-0}
 p_minor=${p_minor:-0}
 p_patch=${p_patch:-0}
 
+echo "c_major $c_major c_minor $c_minor c_patch $c_patch"
+echo "p_major $p_major p_minor $p_minor p_patch $p_patch"
+# Determine bump type
 bump_type="patch"  # Default
 if [ "$c_major" -gt "$p_major" ]; then
   bump_type="major"
