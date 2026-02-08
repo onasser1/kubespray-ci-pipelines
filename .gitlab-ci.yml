@@ -46,7 +46,8 @@ run-automated-upgrade-galaxy:
   image: ubuntu:latest
   script:
     - |
-      apt install git
+      apt update
+      apt install -y git
       ls -la
       chmod +x upgrade-galaxy.sh
       ./upgrade-galaxy.sh
