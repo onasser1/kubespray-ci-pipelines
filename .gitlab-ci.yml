@@ -50,6 +50,5 @@ run-automated-upgrade-galaxy:
     - |
       apt update
       apt install -y git
-      ls -la
       chmod +x upgrade-galaxy.sh
       ./upgrade-galaxy.sh
