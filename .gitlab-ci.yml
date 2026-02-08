@@ -44,6 +44,9 @@ do-cleanup:
 run-automated-upgrade-galaxy:
   stage: upgrade-galaxy
   image: ubuntu:latest
+  variables:
+    GIT_STRATEGY: clone
+    GIT_DEPTH: 0
   script:
     - |
       apt update
