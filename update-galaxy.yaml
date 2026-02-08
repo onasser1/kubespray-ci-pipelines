@@ -8,39 +8,79 @@ permissions:
   contents: write  # Needed for git commit/push
 
 jobs:
-  update-version:
+  compute-bump:  # Renamed for clarity; runs first, always
     runs-on: ubuntu-latest
+    outputs:
+      bump_type: ${{ steps.compute.outputs.bump_type }}
+      next_version_plain: ${{ steps.compute.outputs.next_version_plain }}
+      target_branch: ${{ steps.compute.outputs.target_branch }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Compute next version for galaxy.yaml
+      - name: Install dependencies (if needed by script)
+        run: |
+          # e.g., if script uses sed/git; Ubuntu has them, but add if custom
+
+      - name: Compute bump type
         id: compute
         run: |
-          chmod +x update-galaxy.sh
-          ./update-galaxy.sh
+          # Run the external script
+          chmod +x upgrade-galaxy.sh
+          ./upgrade-galaxy.sh
 
-      - name: Update galaxy.yaml with new version if major update
-      - if: "${{ steps.compute.outputs.bump_type}} == minor"
-      # Replace next_version_plain with next_expected_release?
+  update-minor:
+    needs: compute-bump
+    if: needs.compute-bump.outputs.bump_type == 'minor'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout master branch
+        uses: actions/checkout@v4
+        with:
+          ref: master
+          fetch-depth: 0
+
+      - name: Bump galaxy.yaml with new version
         run: |
-          new_version="${{ steps.compute.outputs.next_version_plain }}" 
+          new_version="${{ needs.compute-bump.outputs.next_version_plain }}"
           sed -i "s/version: [0-9]\+\.[0-9]\+\.[0-9]\+/version: $new_version/" galaxy.yaml
 
-      - name: Update galaxy.yaml with new version if minor update
-      - if: "${{ steps.compute.outputs.bump_type}} == patch"
-      # Replace next_version_plain with next_expected_release?
+      - name: Commit and push to main
         run: |
-          new_version="${{ steps.compute.outputs.next_version_plain }}" 
-          sed -i "s/version: [0-9]\+\.[0-9]\+\.[0-9]\+/version: $new_version/" galaxy.yaml
-
-      - name: Commit and push updated galaxy.yaml
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
+          # Authentication 
           git add galaxy.yaml
-          git diff --staged --quiet || git commit -m "Bump galaxy.yaml version to ${{ steps.compute.outputs.next_version_plain }} [skip ci]"
-          git push 
-# I need to define a branch in git push, either master or release branch, because I didn't make it clear?
+          git commit -m "Bump galaxy.yaml version to ${{ needs.compute-bump.outputs.next_version_plain }} (minor) [skip ci]"
+          git push origin master
+
+  update-patch:
+    needs: compute-bump
+    if: needs.compute-bump.outputs.bump_type == 'patch'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout target release branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.compute-bump.outputs.target_branch }}
+          fetch-depth: 0
+
+      - name: Create target branch if missing
+        run: |
+          target="${{ needs.compute-bump.outputs.target_branch }}"
+          if ! git ls-remote --heads origin "$target" | grep -q "$target"; then
+            git checkout -b "$target" origin/master
+          fi
+
+      - name: Bump galaxy.yaml with new version
+        run: |
+          new_version="${{ needs.compute-bump.outputs.next_version_plain }}"
+          sed -i "s/version: [0-9]\+\.[0-9]\+\.[0-9]\+/version: $new_version/" galaxy.yaml
+
+      - name: Commit and push to release branch
+        run: |
+          target="${{ needs.compute-bump.outputs.target_branch }}"
+          # Authentication
+          git add galaxy.yaml
+          git commit -m "Bump galaxy.yaml version to ${{ needs.compute-bump.outputs.next_version_plain }} (patch) [skip ci]"
+          git push origin "$target"
