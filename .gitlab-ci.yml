@@ -3,6 +3,7 @@ stages:
   - identify-repos
   - cleanup
   - generate-release-notes
+  - upgrade-galaxy
 get-branches:
   stage: retrieve-branches
   image: alpine:latest
@@ -39,3 +40,10 @@ do-cleanup:
       for REPO in $REPOS_TO_DELETE; do
           echo "Deleting image: quay.io/kubespray/vm-$REPO"
       done
+
+run-automated-upgrade-galaxy:
+  stage: upgrade-galaxy
+  image: alpine:latest
+  script:
+    - chmod +x upgrade-galaxy.sh
+    - ./upgrade-galaxy.sh
