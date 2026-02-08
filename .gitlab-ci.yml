@@ -51,7 +51,7 @@ run-automated-upgrade-galaxy:
     - |
       apt update
       apt install -y git
-      git fetch --tags origin
+      git fetch --tags
       ls -la
       chmod +x upgrade-galaxy.sh
       ./upgrade-galaxy.sh
