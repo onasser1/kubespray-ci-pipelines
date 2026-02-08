@@ -16,7 +16,6 @@ p_major=${p_major:-0}
 p_minor=${p_minor:-0}
 p_patch=${p_patch:-0}
 
-# Determine bump type
 bump_type="patch"  # Default
 if [ "$c_major" -gt "$p_major" ]; then
   bump_type="major"
