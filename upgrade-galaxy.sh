@@ -44,6 +44,6 @@ case $bump_type in
 esac
 
 next_expected_release="v${next_major}.${next_minor}.${next_patch}"
-echo "next_expected_release=$next_expected_release" >> "$GITHUB_OUTPUT"
-echo "bump_type=$bump_type" >> "$GITHUB_OUTPUT"
-echo "target_branch=$target_branch" >> "$GITHUB_OUTPUT"
+# echo "next_expected_release=$next_expected_release" >> "$GITHUB_OUTPUT"
+# echo "bump_type=$bump_type" >> "$GITHUB_OUTPUT"
+# echo "target_branch=$target_branch" >> "$GITHUB_OUTPUT"

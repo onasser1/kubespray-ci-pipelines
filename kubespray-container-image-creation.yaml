@@ -1,0 +1,20 @@
+jobs:
+  container-creation:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get current release version
+        id: release-version
+        run: |
+          current_version=$(cat VERSION)
+
+      - name: kubespray container image creation
+        id: kubespray-container
+        run: |
+          nerdctl build -t quay.io/kubespray/kubespray:$current_version .
+          nerdctl push quay.io/kubespray/kubespray:$current_version
+
+      - name: vagrant-docker container image
+        id: vagrant-container
+        run: |
+          cd test-infra/vagrant-docker
+          ./build $current_version
