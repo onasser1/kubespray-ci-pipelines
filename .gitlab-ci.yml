@@ -14,7 +14,7 @@ get-branches:
       RELEASES=$(gh api "repos/kubernetes-sigs/kubespray/branches?per_page=100" --paginate \
         | jq -r '.[].name | select(test("^release-[0-9]+\\.[0-9]+$"))' \
         | sort -V -r | head -n 4 | tr '\n' ' ')
-      
+
       echo "LATEST_RELEASES=\"master $RELEASES\"" > build.env
   artifacts:
     reports:
@@ -52,3 +52,13 @@ run-automated-upgrade-galaxy:
       apt install -y git
       chmod +x upgrade-galaxy.sh
       ./upgrade-galaxy.sh
+
+broken-links-checker:
+  stage: link-checker
+  image: ubuntu:latest
+  script:
+    - |
+      sudo apt update
+      sudo apt install -y snapd
+      sudo snap install lychee
+      lychee .
