@@ -59,7 +59,7 @@ broken-links-checker:
   image: ubuntu:latest
   script:
     - |
-      sudo apt update
-      sudo apt install -y snapd
-      sudo snap install lychee
+      apt update
+      apt install -y snapd
+      snap install lychee
       lychee .
