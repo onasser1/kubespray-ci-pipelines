@@ -4,6 +4,7 @@ stages:
   - cleanup
   - generate-release-notes
   - upgrade-galaxy
+  - link-checker
 get-branches:
   stage: retrieve-branches
   image: alpine:latest
