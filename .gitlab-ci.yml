@@ -62,7 +62,7 @@ broken-links-checker:
     - apt-get install -y curl ca-certificates
   script:
     - curl -L -o lychee.tar.gz https://github.com/lycheeverse/lychee/releases/download/lychee-v0.23.0/lychee-x86_64-unknown-linux-gnu.tar.gz
-    - tar -xzf lychee.tar.gz
+    - tar -xzf lychee.tar.gz lychee
     - chmod +x lychee
     - mv lychee /usr/local/bin/lychee
-    - lychee -v .
+    - lychee --verbose --root-dir . --exclude-path '.git' .
