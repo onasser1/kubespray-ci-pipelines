@@ -57,9 +57,12 @@ run-automated-upgrade-galaxy:
 broken-links-checker:
   stage: link-checker
   image: ubuntu:latest
+  before_script:
+    - apt-get update
+    - apt-get install -y curl ca-certificates
   script:
-    - |
-      apt update
-      apt install -y snapd
-      snap install lychee
-      lychee .
+    - curl -L -o lychee.tar.gz https://github.com/lycheeverse/lychee/releases/download/lychee-v0.23.0/lychee-x86_64-unknown-linux-gnu.tar.gz
+    - tar -xzf lychee.tar.gz
+    - chmod +x lychee
+    - mv lychee /usr/local/bin/lychee
+    - lychee .
