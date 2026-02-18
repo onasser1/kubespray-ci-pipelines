@@ -1,0 +1,1 @@
+This is a working / correct reference in docs, this file should pass and not complain in lychee. You can see the correct reference from [here](../correct-reference-file.md)
