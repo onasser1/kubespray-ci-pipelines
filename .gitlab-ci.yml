@@ -68,6 +68,7 @@ broken-links-checker:
     - lychee --verbose --root-dir . --exclude-path '.git' .
 
 log:
+  script: echo "This job will be executed only if there is a failure happened"
   artifacts:
     when: on_failure
     name: "log-failure-artifact"
