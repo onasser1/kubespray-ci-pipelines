@@ -69,10 +69,10 @@ broken-links-checker:
     - mv lychee /usr/local/bin/lychee
     - lychee --verbose --root-dir . --exclude-path '.git' .
 
-failed-job:
-  stage: failed-jobs
-  script:
-    - exit 1
+# failed-job:
+#   stage: failed-jobs
+#   script:
+#     - exit 1
 
 log:
   stage: log
