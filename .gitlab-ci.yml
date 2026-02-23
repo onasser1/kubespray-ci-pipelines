@@ -78,7 +78,7 @@ log:
   stage: log
   script: echo "This job will be executed only if there is a failure happened"
   artifacts:
-    when: on_failure
     name: "log-failure-artifact"
     paths:
       - /var/log/journal
+  when: on_failure
