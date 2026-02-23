@@ -1,7 +1,4 @@
-stages:
-  - log-two
-
-log:
+log-two:
   stage: log-two
   script: echo "This job will be executed only if there is a failure happened"
   artifacts:
