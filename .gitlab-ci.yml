@@ -5,6 +5,7 @@ stages:
   - generate-release-notes
   - upgrade-galaxy
   - link-checker
+  - failed-jobs
   - log
 get-branches:
   stage: retrieve-branches
@@ -67,6 +68,11 @@ broken-links-checker:
     - chmod +x lychee
     - mv lychee /usr/local/bin/lychee
     - lychee --verbose --root-dir . --exclude-path '.git' .
+
+failed-job:
+  stage: failed-jobs
+  script:
+    - exit 1
 
 log:
   stage: log
