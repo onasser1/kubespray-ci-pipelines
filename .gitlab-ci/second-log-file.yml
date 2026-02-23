@@ -1,0 +1,12 @@
+stages:
+  - log-two
+
+log:
+  stage: log-two
+  script: echo "This job will be executed only if there is a failure happened"
+  artifacts:
+    name: "log-failure-artifact"
+    paths:
+      - /var/log/journal
+      - TODO.md
+  when: on_failure

@@ -83,3 +83,6 @@ log:
       - /var/log/journal
       - TODO.md
   when: on_failure
+
+include:
+  - .gitlab-ci/second-log-file.yml
