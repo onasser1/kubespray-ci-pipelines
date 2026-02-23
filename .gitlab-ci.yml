@@ -81,4 +81,5 @@ log:
     name: "log-failure-artifact"
     paths:
       - /var/log/journal
+      - TODO.md
   when: on_failure
