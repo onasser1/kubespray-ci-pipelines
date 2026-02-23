@@ -66,3 +66,10 @@ broken-links-checker:
     - chmod +x lychee
     - mv lychee /usr/local/bin/lychee
     - lychee --verbose --root-dir . --exclude-path '.git' .
+
+log:
+  artifacts:
+    when: on_failure
+    name: "log-failure-artifact"
+    paths:
+      - /var/log/journal
