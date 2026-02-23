@@ -5,6 +5,7 @@ stages:
   - generate-release-notes
   - upgrade-galaxy
   - link-checker
+  - log
 get-branches:
   stage: retrieve-branches
   image: alpine:latest
@@ -68,6 +69,7 @@ broken-links-checker:
     - lychee --verbose --root-dir . --exclude-path '.git' .
 
 log:
+  stage: log
   script: echo "This job will be executed only if there is a failure happened"
   artifacts:
     when: on_failure
